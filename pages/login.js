@@ -1,24 +1,36 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Link from 'next/link'
 import { Button, Form, Grid, Header, Message, Segment } from 'semantic-ui-react'
 
-import { loginThunk } from '../redux/auth'
+import { loginThunk, logoutThunk, meThunk } from '../redux/auth'
 
 export const LoginPage = () => {
+	let authToken = useSelector((state) => state.auth.token)
+	let user = useSelector((state) => state.auth.user)
+	let isAuthenticated = useSelector((state) => state.auth.isAuthenticated)
 	const initialUserState = { email: '', password: '' }
 	const [userinfo, setUserinfo] = useState(initialUserState)
 
 	const dispatch = useDispatch()
 
 	const handleChange = (_e, { name, value }) => {
-		console.log(_e, name, value)
 		setUserinfo({ ...userinfo, [name]: value })
 	}
 
 	const handleSubmit = () => {
 		console.log('Loggin in')
 		dispatch(loginThunk(userinfo))
+	}
+
+	const handleLogout = () => {
+		console.log('Logging out')
+		dispatch(logoutThunk())
+	}
+
+	const handleGetUser = () => {
+		console.log('Getting user')
+		dispatch(meThunk())
 	}
 
 	return (
@@ -59,7 +71,15 @@ export const LoginPage = () => {
 					<Link href='/signup'>
 						<a>Sign Up</a>
 					</Link>
+					<Button onClick={handleLogout}>Logout</Button>
+					<Button onClick={handleGetUser}>Get User</Button>
 				</Message>
+				{isAuthenticated && <Message>Authenticated!! {authToken}</Message>}
+				{user && (
+					<Message>
+						User: {user.name}, {user.email}
+					</Message>
+				)}
 			</Grid.Column>
 		</Grid>
 	)

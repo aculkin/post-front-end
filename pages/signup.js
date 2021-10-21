@@ -12,7 +12,6 @@ export const SignupPage = () => {
 	const dispatch = useDispatch()
 
 	const handleChange = (_e, { name, value }) => {
-		console.log(_e, name, value)
 		setUserinfo({ ...userinfo, [name]: value })
 	}
 
@@ -56,7 +55,7 @@ export const SignupPage = () => {
 							type='password'
 						/>
 						<Button color='teal' fluid size='large'>
-							Login
+							Create Account
 						</Button>
 					</Segment>
 				</Form>
