@@ -1,22 +1,29 @@
 import * as types from './types'
 
 const initialAuthState = {
-	token: localStorage.getItem('token'),
-	isAuthenticated: null,
-	// isLoading: false,
+	token: null,
+	isAuthenticated: false,
 	user: null
 }
 
-export const authReducer = (state = initialUserState, { type, payload }) => {
+if (typeof window !== 'undefined') {
+	let authToken = window.localStorage.getItem('token') || null
+	if (authToken) {
+		initialAuthState.token = authToken
+		initialAuthState.isAuthenticated = true
+	}
+	initialAuthState.user = window.localStorage.getItem('user') || null
+}
+
+export const authReducer = (state = initialAuthState, { type, payload }) => {
 	switch (type) {
-		case types.GET_AUTH_TOKEN:
-			return { ...state, token: payload }
-		case types.SIGNUP:
 		case types.LOGIN:
+			return { ...state, token: payload, isAuthenticated: true }
+		case types.SIGNUP:
 		case types.ME:
-			return { ...state, isAuthenticated: true, user: payload }
+			return { ...state, user: payload }
 		case types.LOGOUT:
-			return initialAuthState
+			return { token: null, isAuthenticated: false, user: null }
 		default:
 			return state
 	}
