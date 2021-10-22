@@ -12,14 +12,22 @@ if (typeof window !== 'undefined') {
 		initialAuthState.token = authToken
 		initialAuthState.isAuthenticated = true
 	}
-	initialAuthState.user = window.localStorage.getItem('user') || null
+	let userObject = window.localStorage.getItem('user') || null
+	if (userObject) {
+		initialAuthState.user = JSON.parse(userObject)
+	}
 }
 
 export const authReducer = (state = initialAuthState, { type, payload }) => {
 	switch (type) {
 		case types.LOGIN:
-			return { ...state, token: payload, isAuthenticated: true }
 		case types.SIGNUP:
+			return {
+				...state,
+				token: payload?.token,
+				isAuthenticated: !!payload?.token,
+				user: payload?.user
+			}
 		case types.ME:
 			return { ...state, user: payload }
 		case types.LOGOUT:

@@ -1,4 +1,4 @@
-import { GET_AUTH_TOKEN, LOGIN, LOGOUT, SIGNUP, ME } from './types'
+import { LOGIN, LOGOUT, SIGNUP, ME } from './types'
 import API from '../../API'
 
 //user actions
@@ -27,9 +27,13 @@ const localStorageWrapper = (action, key, value) => {
 //user thunks
 export const signupThunk = (payload) => async (dispatch) => {
 	try {
-		const { data: user } = await API.auth.signup(payload)
-		localStorageWrapper('set', 'user', user)
-		dispatch(signup(user))
+		const { data: user } = await API.auth.createUser(payload)
+		localStorageWrapper('set', 'user', JSON.stringify(user))
+		const {
+			data: { token }
+		} = await API.auth.getToken(payload)
+		localStorageWrapper('set', 'token', token)
+		dispatch(signup({ user, token }))
 		return user
 	} catch (error) {
 		console.log(error)
@@ -38,9 +42,15 @@ export const signupThunk = (payload) => async (dispatch) => {
 }
 export const loginThunk = (userToLogin) => async (dispatch) => {
 	try {
-		const { data } = await API.auth.login(userToLogin)
-		localStorageWrapper('set', 'token', data?.token)
-		dispatch(login(data?.token || null))
+		console.log('user:', userToLogin)
+		const {
+			data: { token }
+		} = await API.auth.getToken(userToLogin)
+		localStorageWrapper('set', 'token', token)
+		console.log('token', token)
+		const { data: user } = await API.auth.getUser(token)
+		localStorageWrapper('set', 'user', JSON.stringify(user))
+		dispatch(login({ user, token }))
 		return
 	} catch (error) {
 		console.log(error)
@@ -58,9 +68,9 @@ export const logoutThunk = () => async (dispatch) => {
 		return error
 	}
 }
-export const meThunk = () => async (dispatch) => {
+export const meThunk = (optionalToken) => async (dispatch) => {
 	try {
-		const { data: user } = await API.auth.me()
+		const { data: user } = await API.auth.getUser(optionalToken)
 		dispatch(me(user))
 		return user
 	} catch (error) {

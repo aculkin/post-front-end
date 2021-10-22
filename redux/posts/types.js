@@ -1,0 +1,6 @@
+export const LOAD_POSTS = 'LOAD_POSTS'
+export const CREATE_POST = 'CREATE_POST'
+export const EDIT_POST = 'EDIT_POST'
+export const DELETE_POST = 'DELETE_POST'
+export const REFRESH_POSTS = 'REFRESH_POSTS'
+export const LOAD_MORE_POSTS = 'LOAD_MORE_POSTS' 
