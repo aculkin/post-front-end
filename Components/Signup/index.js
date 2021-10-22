@@ -91,3 +91,5 @@ export const Signup = () => {
 		</Form>
 	)
 }
+
+export default Signup
