@@ -1,5 +1,6 @@
 import 'semantic-ui-css/semantic.min.css'
-import '../styles/globals.css'
+import 'antd/dist/antd.css'
+
 import { Provider } from 'react-redux'
 
 import { useStore } from '../redux'
