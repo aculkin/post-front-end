@@ -1,8 +1,8 @@
 import axios from 'axios'
 
 import { auth } from './auth'
+import { posts } from './posts'
 import { store } from '../redux'
-
 
 axios.interceptors.request.use((req) => {
 	const currentState = store.getState()
@@ -12,7 +12,8 @@ axios.interceptors.request.use((req) => {
 })
 
 export const API = {
-	auth
+	auth,
+	posts
 }
 
 export default API

@@ -4,16 +4,20 @@ import apiRoutes from './apiRoutes'
 
 ///test API routes for now
 export const auth = {
-	signup: (newUser) => {
-		return axios.post(apiRoutes.auth.signup, newUser)
+	getToken: (userToGetToken) => {
+		return axios.post(apiRoutes.auth.getToken, userToGetToken)
 	},
-	login: (userToLogin) => {
-		return axios.post(apiRoutes.auth.login, userToLogin)
+	getUser: (optionalToken) => {
+		return optionalToken
+			? axios.get(apiRoutes.auth.getUser, {
+					headers: { Authorization: `Token ${optionalToken}` }
+			  })
+			: axios.get(apiRoutes.auth.getUser)
+	},
+	createUser: (newUser) => {
+		return axios.post(apiRoutes.auth.signup, newUser)
 	},
 	logout: () => {
 		return Promise.resolve()
 	},
-	me: () => {
-		return axios.get(apiRoutes.auth.me)
-	}
 }
