@@ -9,7 +9,10 @@ export const apiRoutes = {
 	},
 	post: {
 		list: `${baseUrl}/api/post/posts/`,
-		create: `${baseUrl}/api/post/posts/`
+		create: `${baseUrl}/api/post/posts/`,
+		get: (id) => `${baseUrl}/api/post/posts/${id}/`,
+		edit: (id) => `${baseUrl}/api/post/posts/${id}/`,
+		delete: (id) => `${baseUrl}/api/post/posts/${id}/`
 	}
 }
 export default apiRoutes
