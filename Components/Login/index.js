@@ -1,80 +1,104 @@
+import styles from './index.module.css'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { message, Form, Input, Button } from 'antd'
+import { useRouter } from 'next/router'
+import Link from 'next/link'
+import { message, Form, Input, Button, Checkbox } from 'antd'
+import { UserOutlined, LockOutlined } from '@ant-design/icons'
+
 import { loginThunk } from '../../redux/auth'
 
 const initialUserState = { email: '', password: '' }
 
 export const Login = () => {
 	const dispatch = useDispatch()
+	const router = useRouter()
 	const [userInfo, setUserInfo] = useState(initialUserState)
 	const [loading, setLoading] = useState(false)
 
-	const handleChange = (e, options) =>
-		setUserInfo({ ...userInfo, [e.target.name]: e.target.value })
+	const handleChange = ({ target }) =>
+		setUserInfo({ ...userInfo, [target.name]: target.value })
+
+	const afterSubmit = (error) => {
+		setLoading(false)
+		if (error) {
+			error.message === 'Request failed with status code 400'
+				? message.error('User name or password incorrect')
+				: message.error(error.message)
+		} else {
+			message.success('Successfully logged in')
+			router.push('/')
+		}
+	}
 
 	const handleSubmit = () => {
 		setLoading(true)
-		dispatch(loginThunk(userInfo))
+		dispatch(loginThunk(userInfo, afterSubmit))
 	}
 
-	const onFinishFailed = (errorInfo) => {
-		message.warning(`Login failed: ${errorInfo}`)
-		console.log('Failed:', errorInfo)
+	const onFinishFailed = (error) => {
+		let errorMessage =
+			error.errorFields[0]?.errors?.[0] ||
+			'Please fix the errors before submitting'
+		message.warning(errorMessage)
 	}
 
 	return (
 		<>
-			<h1>Log in to your account</h1>
 			<Form
-				name='basic'
-				labelCol={{
-					span: 8
-				}}
-				wrapperCol={{
-					span: 16
-				}}
+				name='normal_login'
+				className={styles['login-form']}
+				initialValues={{ remember: true }}
 				onFinish={handleSubmit}
 				onFinishFailed={onFinishFailed}
-				autoComplete='off'
 			>
+				<h1>Login to your account</h1>
 				<Form.Item
-					label='Email'
 					name='email'
+					rules={[{ required: true, message: 'Please input your Username!' }]}
 					onChange={handleChange}
-					rules={[
-						{
-							required: true,
-							message: 'Please input your username!'
-						}
-					]}
+					value={userInfo.email}
 				>
-					<Input name='email' />
+					<Input
+						prefix={<UserOutlined className='site-form-item-icon' />}
+						placeholder='Email'
+						name='email'
+					/>
 				</Form.Item>
-
 				<Form.Item
-					label='Password'
 					name='password'
+					rules={[{ required: true, message: 'Please input your Password!' }]}
 					onChange={handleChange}
-					rules={[
-						{
-							required: true,
-							message: 'Please input your password!'
-						}
-					]}
+					value={userInfo.password}
 				>
-					<Input.Password name='password' />
+					<Input.Password
+						prefix={<LockOutlined className='site-form-item-icon' />}
+						type='password'
+						name='password'
+						placeholder='Password'
+					/>
+				</Form.Item>
+				<Form.Item>
+					<Form.Item name='remember' valuePropName='checked' noStyle>
+						<Checkbox disabled>Remember me</Checkbox>
+					</Form.Item>
+					<Link passHref href='/forgot-password'>
+						<a className={styles['login-form-forgot']}>Forgot password</a>
+					</Link>
 				</Form.Item>
 
-				<Form.Item
-					wrapperCol={{
-						offset: 8,
-						span: 16
-					}}
-				>
-					<Button type='primary' htmlType='submit' loading={loading}>
-						Submit
+				<Form.Item>
+					<Button
+						type='primary'
+						htmlType='submit'
+						className={styles['login-form-button']}
+					>
+						Log in
 					</Button>
+					Or{' '}
+					<Link href='/signup' passHref>
+						<a>Signup now!</a>
+					</Link>
 				</Form.Item>
 			</Form>
 		</>
