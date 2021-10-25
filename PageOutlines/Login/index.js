@@ -2,14 +2,19 @@ import { Row, Col } from 'antd'
 
 import { Login } from '../../Components'
 
-export const LoginPage = () => {
+export const LoginOutline = () => {
 	return (
-		<Row style={{ margin: '100px' }}>
-			<Col offset={5} span={10}>
+		<Col>
+			<Row
+				style={{ padding: '50px 0px' }}
+				type='flex'
+				align='middle'
+				justify='center'
+			>
 				<Login />
-			</Col>
-		</Row>
+			</Row>
+		</Col>
 	)
 }
 
-export default LoginPage
+export default LoginOutline

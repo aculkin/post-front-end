@@ -1,18 +1,20 @@
-import { Layout } from 'antd'
+import { Row, Col } from 'antd'
 
-import { Signup } from '../../PageOutlines'
-const { Content, Header, Footer } = Layout
+import { Signup } from '../../Components'
 
-export const SignupPage = () => {
+export const SignupOutline = () => {
 	return (
-		<Layout>
-			<Header />
-			<Content>
+		<Col>
+			<Row
+				style={{ padding: '100px 0px' }}
+				type='flex'
+				align='middle'
+				justify='center'
+			>
 				<Signup />
-			</Content>
-			<Footer />
-		</Layout>
+			</Row>
+		</Col>
 	)
 }
 
-export default SignupPage
+export default SignupOutline

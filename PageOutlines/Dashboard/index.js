@@ -1,16 +1,12 @@
-import { BackTop, Space, Row, Col } from 'antd'
+import { BackTop, Space, Row } from 'antd'
 import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import { SideNavLayout } from '../../Layouts/SideNavLayout'
 import { PostPreview, NewPost } from '../../Components'
-import {
-	loadPostsThunk,
-	loadMorePostsThunk,
-	refreshPostsThunk
-} from '../../redux/posts'
+import { loadPostsThunk } from '../../redux/posts'
 
-export const Dashboard = () => {
+export const DashboardOutline = () => {
 	const dispatch = useDispatch()
 	const postsToDisplay = useSelector((state) => state.posts)
 
@@ -34,4 +30,4 @@ export const Dashboard = () => {
 	)
 }
 
-export default Dashboard
+export default DashboardOutline
