@@ -1,4 +1,4 @@
-import { Modal, Button, Input } from 'antd'
+import { Modal, Button, Input, Form } from 'antd'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
@@ -13,33 +13,33 @@ const initialPostState = {
 
 export const NewPost = () => {
 	const dispatch = useDispatch()
+	const [form] = Form.useForm()
 	const [visible, setVisible] = useState(false)
 	const [submitLoading, setSubmitLoading] = useState(false)
-	const [postDetails, setPostDetails] = useState(initialPostState)
 
 	const showModal = () => {
 		setVisible(true)
 	}
 
+	const afterSubmit = (error) => {
+		setSubmitLoading(false)
+		if (error) {
+		} else {
+			setVisible(false)
+		}
+	}
+
 	const handleSubmit = () => {
 		setSubmitLoading(true)
-		dispatch(
-			createPostThunk(postDetails, () => {
-				setSubmitLoading(false)
-				setVisible(false)
-				setPostDetails(initialPostState)
-			})
-		)
-		setTimeout(() => {}, 2000)
+		dispatch(createPostThunk(form.getFieldsValue(), afterSubmit))
 	}
 
 	const handleCancel = () => {
 		setVisible(false)
-		setPostDetails(initialPostState)
 	}
 
-	const handleChange = (e) =>
-		setPostDetails({ ...postDetails, [e.target.name]: e.target.value })
+	const handleChange = (changed) =>
+		changed.forEach(({ name, value }) => form.setFieldsValue({ [name]: value }))
 
 	return (
 		<>
@@ -53,21 +53,15 @@ export const NewPost = () => {
 				confirmLoading={submitLoading}
 				onCancel={handleCancel}
 			>
-				<p>This is the modal test</p>
-				<Input
-					name='title'
-					placeholder='Post Title'
-					value={postDetails?.title}
-					onChange={handleChange}
-				/>
-				<TextArea
-					showCount
-					maxLength={500}
-					name='content'
-					placeholder='Post Content'
-					value={postDetails?.content}
-					onChange={handleChange}
-				/>
+				<Form onFieldsChange={handleChange} form={form}>
+					<p>Write what you would like to post below</p>
+					<Form.Item name='title'>
+						<Input placeholder='Post Title' />
+					</Form.Item>
+					<Form.Item name='content'>
+						<TextArea showCount maxLength={500} placeholder='Post Content' />
+					</Form.Item>
+				</Form>
 			</Modal>
 		</>
 	)
