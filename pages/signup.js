@@ -1,7 +1,7 @@
-import { Signup } from '../PageOutlines'
+import { SignupOutline } from '../PageOutlines'
 
 export const SignupPage = () => {
-	return <Signup />
+	return <SignupOutline />
 }
 
 export default SignupPage
