@@ -1,11 +1,14 @@
-import { LOGIN, LOGOUT, SIGNUP, ME } from './types'
+import { LOGIN, LOGOUT, SIGNUP, ME, EDIT_USER_DETAILS } from './types'
 import API from '../../API'
 
-//user actions
 export const signup = (payload) => ({ type: SIGNUP, payload })
 export const login = (payload) => ({ type: LOGIN, payload })
 export const logout = () => ({ type: LOGOUT })
 export const me = (payload) => ({ type: ME, payload })
+export const editUserDetails = (payload) => ({
+	type: EDIT_USER_DETAILS,
+	payload
+})
 
 const localStorageWrapper = (action, key, value) => {
 	if (typeof window !== 'undefined') {
@@ -24,8 +27,7 @@ const localStorageWrapper = (action, key, value) => {
 	}
 }
 
-//user thunks
-export const signupThunk = (payload) => async (dispatch) => {
+export const signupThunk = (payload, afterComplete) => async (dispatch) => {
 	try {
 		const { data: user } = await API.auth.createUser(payload)
 		localStorageWrapper('set', 'user', JSON.stringify(user))
@@ -34,37 +36,38 @@ export const signupThunk = (payload) => async (dispatch) => {
 		} = await API.auth.getToken(payload)
 		localStorageWrapper('set', 'token', token)
 		dispatch(signup({ user, token }))
+		afterComplete && afterComplete()
 		return user
 	} catch (error) {
-		console.log(error)
+		afterComplete && afterComplete(error)
 		return error
 	}
 }
-export const loginThunk = (userToLogin) => async (dispatch) => {
+export const loginThunk = (userToLogin, afterComplete) => async (dispatch) => {
 	try {
-		console.log('user:', userToLogin)
 		const {
 			data: { token }
 		} = await API.auth.getToken(userToLogin)
 		localStorageWrapper('set', 'token', token)
-		console.log('token', token)
 		const { data: user } = await API.auth.getUser(token)
 		localStorageWrapper('set', 'user', JSON.stringify(user))
 		dispatch(login({ user, token }))
-		return
+		afterComplete && afterComplete()
+		return user
 	} catch (error) {
-		console.log(error)
+		afterComplete && afterComplete(error)
 		return error
 	}
 }
-export const logoutThunk = () => async (dispatch) => {
+export const logoutThunk = (afterComplete) => async (dispatch) => {
 	try {
 		await API.auth.logout()
 		localStorageWrapper('clear')
 		dispatch(logout())
+		afterComplete && afterComplete()
 		return
 	} catch (error) {
-		console.log(error)
+		afterComplete && afterComplete(error)
 		return error
 	}
 }
@@ -78,3 +81,16 @@ export const meThunk = (optionalToken) => async (dispatch) => {
 		return error
 	}
 }
+export const editUserDetailsThunk =
+	(userDetailsToEdit, afterComplete) => async (dispatch) => {
+		try {
+			const { data: editedUser } = await API.auth.editUser(userDetailsToEdit)
+			localStorageWrapper('set', 'user', JSON.stringify(editedUser))
+			dispatch(editUserDetails(editedUser))
+			afterComplete && afterComplete()
+			return editedUser
+		} catch (error) {
+			afterComplete && afterComplete(error)
+			return error
+		}
+	}
