@@ -9,7 +9,6 @@ export const postReducer = (state = initialPostState, { type, payload }) => {
 		case types.LOAD_POSTS:
 			return [...payload]
 		case types.EDIT_POST:
-			oldPost = state.find((post) => post.id === payload.id)
 			return state.map((post) => {
 				if (post.id === payload.id) {
 					return payload

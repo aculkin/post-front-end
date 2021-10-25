@@ -23,15 +23,17 @@ export const refreshPosts = (newPosts) => ({
 	payload: newPosts
 })
 
-export const createPostThunk = (postToCreate) => async (dispatch) => {
-	try {
-		const { data: newPost } = await API.posts.createPost(postToCreate)
-		dispatch(createPost(newPost))
-	} catch (error) {
-		console.log(error)
-		return error
+export const createPostThunk =
+	(postToCreate, afterComplete) => async (dispatch) => {
+		try {
+			const { data: newPost } = await API.posts.createPost(postToCreate)
+			dispatch(createPost(newPost))
+			afterComplete && afterComplete()
+		} catch (error) {
+			afterComplete && afterComplete(error)
+			return error
+		}
 	}
-}
 export const loadPostsThunk = () => async (dispatch) => {
 	try {
 		const { data: posts } = await API.posts.loadPosts()
@@ -41,39 +43,49 @@ export const loadPostsThunk = () => async (dispatch) => {
 		return error
 	}
 }
-export const editPostThunk = (postToEdit) => async (dispatch) => {
-	try {
-		const { data: editedPost } = await API.posts.editPost(postToEdit)
-		dispatch(editPost(editedPost))
-	} catch (error) {
-		console.log(error)
-		return error
+export const editPostThunk =
+	(postId, fieldsToEdit, afterComplete) => async (dispatch) => {
+		try {
+			const { data: editedPost } = await API.posts.editPost(
+				postId,
+				fieldsToEdit
+			)
+			dispatch(editPost(editedPost))
+			afterComplete && afterComplete()
+		} catch (error) {
+			afterComplete && afterComplete(error)
+			return error
+		}
 	}
-}
-export const deletePostThunk = (postId) => async (dispatch) => {
+export const deletePostThunk = (postId, afterComplete) => async (dispatch) => {
 	try {
 		await API.posts.deletePost(postId)
 		dispatch(deletePost(postId))
+		afterComplete && afterComplete()
 	} catch (error) {
-		console.log(error)
+		afterComplete && afterComplete(error)
 		return error
 	}
 }
-export const loadMorePostsThunk = (lastPostDetails) => async (dispatch) => {
-	try {
-		const { data: morePosts } = await API.posts.loadMorePosts(lastPostDetails)
-		dispatch(loadMorePosts(morePosts))
-	} catch (error) {
-		console.log(error)
-		return error
+export const loadMorePostsThunk =
+	(lastPostDetails, afterComplete) => async (dispatch) => {
+		try {
+			const { data: morePosts } = await API.posts.loadMorePosts(lastPostDetails)
+			dispatch(loadMorePosts(morePosts))
+			afterComplete && afterComplete()
+		} catch (error) {
+			afterComplete && afterComplete(error)
+			return error
+		}
 	}
-}
-export const refreshPostsThunk = (firstPostDetails) => async (dispatch) => {
-	try {
-		const { data: newPosts } = await API.posts.refreshPosts(firstPostDetails)
-		dispatch(refreshPosts(newPosts))
-	} catch (error) {
-		console.log(error)
-		return error
+export const refreshPostsThunk =
+	(firstPostDetails, afterComplete) => async (dispatch) => {
+		try {
+			const { data: newPosts } = await API.posts.refreshPosts(firstPostDetails)
+			dispatch(refreshPosts(newPosts))
+			afterComplete && afterComplete()
+		} catch (error) {
+			afterComplete && afterComplete(error)
+			return error
+		}
 	}
-}
