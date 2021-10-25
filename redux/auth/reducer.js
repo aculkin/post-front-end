@@ -28,6 +28,7 @@ export const authReducer = (state = initialAuthState, { type, payload }) => {
 				isAuthenticated: !!payload?.token,
 				user: payload?.user
 			}
+		case types.EDIT_USER_DETAILS:
 		case types.ME:
 			return { ...state, user: payload }
 		case types.LOGOUT:
